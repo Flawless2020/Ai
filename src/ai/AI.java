@@ -10,11 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -27,58 +24,82 @@ public class AI {
     Scanner input = new Scanner(System.in);
     int start;
     int finish;
+    Random random = new Random();
+    long startTimer;
+    long endTimer;
+
     //TODO make sure that timer is set
     public void mazeRunner() {
-        
+        startTimer= System.nanoTime();
         int currentLocation = start;
+        int previousLocation = -1;
         ArrayList<Integer> availableMoves = new ArrayList<>();
         ArrayList<Integer> visitedLocation = new ArrayList<>();
         ArrayList<Integer> currentPath = new ArrayList<>();
-        //start the timer here
-        /*while loop will run until currentLocation is not same as finish*/
+        ArrayList<Integer> pathTaken = new ArrayList<>();
+        System.out.println("Moves:");
         while (currentLocation != finish) {
-            /*for loop which will check every block of array list for currentLocation*/
+            System.out.println(currentLocation);
             for (Maze x : maze) {
-                if (x.getLeft() == currentLocation) {
-                    visitedLocation.add(currentLocation);//adds currentLocation to visitedLocation array
-                    currentPath.add(currentLocation);//updateds current path
-                    availableMoves.clear();//clears available moves to ensure that only current location's moves are available
-                    availableMoves.addAll(checkLocation(currentLocation));//adds current location's available moves
-                    
-                    if(availableMoves.contains(finish)){//checks if finish was reached
-                        currentPath.add(finish);
-                    }else if(availableMoves.isEmpty()){//checks if there are no more moves available, and moves back one room backwards
-                        currentPath.remove(currentPath.size());
-                        currentLocation=currentPath.get(currentPath.size());
-                    }else if(!availableMoves.isEmpty()){//checks if there are available moves, and checks if these moves have been used previously 
-                        for(int y : availableMoves){
-                            if(!visitedLocation.contains(y)){
-                                currentLocation=y;
+                if (x.getLeft() == currentLocation || x.getRight() == currentLocation) {
+                    pathTaken.add(currentLocation);
+                    visitedLocation.add(currentLocation);
+                    currentPath.add(currentLocation);
+                    availableMoves.clear();
+                    availableMoves.addAll(checkLocation(currentLocation));
+
+                    if (availableMoves.contains(finish)) {
+                        for (int d : availableMoves) {
+                            if (d == finish) {
+                                currentPath.add(d);
+                                currentLocation = d;
+                                pathTaken.add(d);
                             }
                         }
+                    } else { 
+                        int randomNumber = random.nextInt((availableMoves.size() - 0) + 0);
+                        int locationPicked = availableMoves.get(randomNumber);
+                        while (locationPicked == currentLocation) {
+                            randomNumber = random.nextInt((availableMoves.size() - 0) + 0);
+                            locationPicked = availableMoves.get(randomNumber);
+                        }
+                        if (availableMoves.size() == 1 && previousLocation == locationPicked) {
+                            previousLocation = currentLocation;
+                            currentLocation = locationPicked;
+                            currentPath.remove(currentPath.size() - 1);
+                        } else if (!visitedLocation.contains(locationPicked)) {
+                            previousLocation = currentLocation;
+                            currentLocation = locationPicked;
+                        } else if (locationPicked != previousLocation) {
+                            previousLocation = currentLocation;
+                            currentLocation = locationPicked;
+                        }
                     }
+                    break;
                 }
             }
         }
-        //stop the timer here
-        for(int i = 0;i<currentPath.size();i++){
-            System.out.println("Move Number "+i+" is "+currentPath.get(i));
+        endTimer=System.nanoTime();
+        System.out.println("Time taken to solve " + (endTimer-startTimer));
+        for (int i = 0; i < pathTaken.size(); i++) {
+            System.out.println("Path taken Move Number " + i + " is " + pathTaken.get(i));
+        }
+        for (int i = 0; i < currentPath.size(); i++) {
+            System.out.println("Move Number " + i + " is " + currentPath.get(i));
         }
     }
-    public int randomPick(int max){
-        Random rand = new Random();
-        int randomNum = rand.nextInt((max - 0)) + 0;
-
-    return randomNum;
-    }
     /*
-    Used for purpose of cheacking available moves for current locations
-    */
-    public ArrayList<Integer> checkLocation(int location){
-        ArrayList<Integer> locations=new ArrayList<>();
+     Used for purpose of cheacking available moves for current locations
+     */
+
+    public ArrayList<Integer> checkLocation(int location) {
+        ArrayList<Integer> locations = new ArrayList<>();
         for (Maze x : maze) {
-            if(x.getLeft()==location){
+            if (x.getLeft() == location) {
                 locations.add(x.getRight());
+            }
+            if (x.getRight() == location) {
+                locations.add(x.getLeft());
             }
         }
         return locations;
