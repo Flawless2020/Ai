@@ -35,20 +35,22 @@ public class AI {
         ArrayList<Integer> visitedLocation = new ArrayList<>();
         ArrayList<Integer> currentPath = new ArrayList<>();
         //start the timer here
+        /*while loop will run until currentLocation is not same as finish*/
         while (currentLocation != finish) {
+            /*for loop which will check every block of array list for currentLocation*/
             for (Maze x : maze) {
                 if (x.getLeft() == currentLocation) {
-                    visitedLocation.add(currentLocation);
-                    currentPath.add(currentLocation);
-                    availableMoves.clear();
-                    availableMoves.addAll(checkLocation(currentLocation));
+                    visitedLocation.add(currentLocation);//adds currentLocation to visitedLocation array
+                    currentPath.add(currentLocation);//updateds current path
+                    availableMoves.clear();//clears available moves to ensure that only current location's moves are available
+                    availableMoves.addAll(checkLocation(currentLocation));//adds current location's available moves
                     
-                    if(availableMoves.contains(finish)){
+                    if(availableMoves.contains(finish)){//checks if finish was reached
                         currentPath.add(finish);
-                    }else if(availableMoves.isEmpty()){
+                    }else if(availableMoves.isEmpty()){//checks if there are no more moves available, and moves back one room backwards
                         currentPath.remove(currentPath.size());
                         currentLocation=currentPath.get(currentPath.size());
-                    }else if(!availableMoves.isEmpty()){
+                    }else if(!availableMoves.isEmpty()){//checks if there are available moves, and checks if these moves have been used previously 
                         for(int y : availableMoves){
                             if(!visitedLocation.contains(y)){
                                 currentLocation=y;
