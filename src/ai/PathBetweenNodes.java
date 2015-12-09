@@ -55,19 +55,6 @@ public class PathBetweenNodes {
 
     }
 
-    public void readMaze() throws FileNotFoundException, IOException {
-        String line = null;
-        System.out.println("Provide name of the file");
-        String fileName = input.next();
-        FileReader fileReader = new FileReader(fileName);
-        BufferedReader bufferedReader
-                = new BufferedReader(fileReader);
-        while ((line = bufferedReader.readLine()) != null) {
-            String[] locations = line.split(" ");
-            graph.addTwoWayVertex(locations[0], locations[1]);
-        }
-        bufferedReader.close();
-    }
 
     private void breadthFirst(PathBetweenNodes graph,
             LinkedList<String> visited) {
@@ -112,6 +99,19 @@ public class PathBetweenNodes {
         System.out.println();
     }
 
+    public void readMaze() throws FileNotFoundException, IOException {
+        String line = null;
+        System.out.println("Provide name of the file");
+        String fileName = input.next();
+        FileReader fileReader = new FileReader(fileName);
+        BufferedReader bufferedReader
+                = new BufferedReader(fileReader);
+        while ((line = bufferedReader.readLine()) != null) {
+            String[] locations = line.split(" ");
+            graph.addTwoWayVertex(locations[0], locations[1]);
+        }
+        bufferedReader.close();
+    }
     public static void main(String[] args) throws FileNotFoundException, IOException {
         PathBetweenNodes x = new PathBetweenNodes();
 
